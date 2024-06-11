@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Form</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    const projectsData = {
+      Software_Engineering: ['Project A', 'Project B', 'Project C'],
+      Quality_Assurance: ['QA Project 1', 'QA Project 2', 'QA Project 3']
+    };
+
+    function populateProjects() {
+      const departmentSelect = document.getElementById('department');
+      const projectsSelect = document.getElementById('projects');
+      const projectsGroup = document.getElementById('projectsGroup');
+
+      const selectedDepartment = departmentSelect.value;
+      if (selectedDepartment === '') {
+        projectsGroup.style.display = 'none';
+        projectsSelect.innerHTML = '<option value="">Select Project</option>';
+      } else {
+        const projects = projectsData[selectedDepartment];
+        projectsSelect.innerHTML = '';
+        projects.forEach(project => {
+          const option = document.createElement('option');
+          option.text = project;
+          option.value = project;
+          projectsSelect.add(option);
+        });
+        projectsGroup.style.display = 'block';
+      }
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const employeeName = document.getElementById('employeeName').value;
+      const employeeId = document.getElementById('employeeId').value;
+      const department = document.getElementById('department').value;
+      const projects = document.getElementById('projects').value;
+      const workStatus = document.getElementById('workStatus').value;
+      const employeeType = document.querySelector('input[name="employeeType"]:checked').value;
+      const shifts = [];
+      document.querySelectorAll('input[type="checkbox"]:checked').forEach(shift => {
+        shifts.push(shift.value);
+      });
+      const salaryRange = document.getElementById('salaryRange').value;
+      const salaryNumber = document.getElementById('salaryNumber');
+
+      // Update salary number display
+      salaryNumber.textContent = salaryRange;
+
+      // Create a new table row
+      const newRow = document.createElement('tr');
+
+      // Populate the table row with data
+      newRow.innerHTML = `
+        <td>${employeeName}</td>
+        <td>${employeeId}</td>
+        <td>${department}</td>
+        <td>${projects}</td>
+        <td>${workStatus}</td>
+        <td>${employeeType}</td>
+        <td>${shifts.join(', ')}</td>
+        <td>${salaryRange}</td>
+      `;
+
+      // Append the new row to the table body
+      const tableBody = document.getElementById('infoTableBody');
+      tableBody.appendChild(newRow);
+
+      // Show the table
+      const tableSection = document.getElementById('tableSection');
+      tableSection.style.display = 'block';
+    }
+
+    function updateSalaryValue() {
+      const salaryRange = document.getElementById('salaryRange').value;
+      const salaryNumber = document.getElementById('salaryNumber');
+      salaryNumber.textContent = salaryRange;
+    }
+  </script>
+</head>
+<body>
+  <h1 align="center">Employee Details</h1>
+  <div class="container mt-5">
+    <form onsubmit="handleSubmit(event)">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="employeeName">Name:</label>
+          <input type="text" class="form-control" id="employeeName" placeholder="Enter Name" required>
+        </div>
+        <div class="form-group">
+          <label for="employeeId">ID:</label>
+          <input type="text" class="form-control" id="employeeId" placeholder="Enter ID" required>
+        </div>
+        <div class="form-group">
+          <label for="department">Department:</label>
+          <select class="form-control" id="department" onchange="populateProjects()" required>
+            <option value="">Select Department</option>
+            <option value="Software_Engineering">Software Engineering</option>
+            <option value="Quality_Assurance">Quality Assurance</option>
+            <option value="DevOps">DevOps</option>
+            <option value="Product_Management">Product Management</option>
+            <option value="Research_and_Development">Research and Development</option>
+          </select>
+        </div>
+        <div class="form-group" id="projectsGroup" style="display:none;">
+          <label for="projects">Projects:</label>
+          <select class="form-control" id="projects">
+            <option value="">Select Project</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="workStatus">Status of Work:</label>
+          <textarea class="form-control" id="workStatus" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Type of Employee:</label><br>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="employeeType" id="fullTime" value="fullTime" required>
+            <label class="form-check-label" for="fullTime">Regular</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="employeeType" id="partTime" value="partTime" required>
+            <label class="form-check-label" for="partTime">Contracted</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Shift:</label><br>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="morningShift" value="morning">
+            <label class="form-check-label" for="morningShift">Morning</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="eveningShift" value="evening">
+            <label class="form-check-label" for="eveningShift">Afternoon</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="nightShift" value="night">
+            <label class="form-check-label" for="nightShift">Night</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="salaryRange">Salary Details:</label>
+          <input type="range" class="form-control-range" id="salaryRange" min="20000" max="200000" oninput="updateSalaryValue()">
+          <p>Salary: <span id="salaryNumber"></span></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form><br>
+    <div id="tableSection" style="display: none;">
+      <table class="table mt-5">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Department</th>
+            <th>Projects</th>
+            <th>Status of Work</th>
+            <th>Type of Employee</th>
+            <th>Shifts</th>
+            <th>Salary Details</th>
+          </tr>
+        </thead>
+        <tbody id="infoTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
